@@ -45,6 +45,8 @@ function NewsFeed() {
   const { data: articles, isLoading, isError } = useQuery({
     queryKey: ['space-news'],
     queryFn: fetchArticles,
+    staleTime: 5 * 60 * 1000, // 5 minutes: data is considered fresh during this time
+    cacheTime: 10 * 60 * 1000, //10 minutes: data stays in cache even after stale time
   });
 
   return (
