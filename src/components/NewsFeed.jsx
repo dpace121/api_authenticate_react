@@ -6,10 +6,6 @@ import './NewsFeed.css';
 import { toast } from "react-toastify";
 import { useQuery } from '@tanstack/react-query';
 
-function fetchArticles() {
-  return axios.get("https://api.spaceflightnewsapi.net/v4/articles/?format=json&limit=10")
-    .then(res => res.data.results);
-}
 
 function NewsFeed() {
   const [firstName, setFirstName] = useState(null);
@@ -42,12 +38,21 @@ function NewsFeed() {
     }
   }, []);
 
+const fetchArticles = async() => {
+  const res = await axios.get("https://api.spaceflightnewsapi.net/v4/articles/?format=json&limit=10");
+  return res.data.results;
+}
+
   const { data: articles, isLoading, isError } = useQuery({
-    queryKey: ['space-news'],
+    queryKey: ['space-article'],
     queryFn: fetchArticles,
-    staleTime: 5 * 60 * 1000, // 5 minutes: data is considered fresh during this time
-    cacheTime: 10 * 60 * 1000, //10 minutes: data stays in cache even after stale time
+    staleTime: 5 * 60 * 1000,  //avoiding refetch for 5 minutes
   });
+useEffect(() => {
+  if (articles) {
+    console.log("Fetched articles", articles);
+  }
+}, [articles]);
 
   return (
     <div className="news-feed">
